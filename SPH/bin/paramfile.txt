@@ -1,5 +1,9 @@
 // parameter file for SPH program
 
 levelmax = 3
-// nstepmax = 10
+nstepmax = 10
 verbose = 1
+
+unit_l = 3.0
+unit_m = 3.0
+unit_t = 4.0
