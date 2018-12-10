@@ -13,16 +13,17 @@
 #include "io.h"
 #include "globals.h"
 
+#ifndef NDIM
+#define NDIM 3
+#pragma message("You didn't define the number of dimensions in the Makefile. Compiling with NDIM=3\n")
+#endif
+
+
 void check_parameters();
 
 
 int main(int argc, char* argv[]){
 
-/* TODO: change this */
-#ifndef NDIM
-#define NDIM 3
-printf("You didn't define the number of dimensions in the Makefile. Compiling with NDIM=3\n");
-#endif
 
   globalparams g;
   g.levelmax = 0;
