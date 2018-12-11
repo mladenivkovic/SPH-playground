@@ -1,8 +1,16 @@
+/*==============*/
+/* IO routines. */
+/*==============*/
+
 #include "params.h"
+#include "part.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#define MAX_LINE_SIZE 200
+
 
 
 /* ====================================================================== */
@@ -40,29 +48,44 @@ void read_paramfile(params* p){
     exit(603);
   }
 
-  char varname[80] ;
-  char varvalue[80] ;
-  char tempbuff[80] ;
+  char varname[MAX_LINE_SIZE] ;
+  char varvalue[MAX_LINE_SIZE] ;
+  char tempbuff[MAX_LINE_SIZE] ;
 
   
-  while (fgets(tempbuff,80,par))
+  while (fgets(tempbuff,MAX_LINE_SIZE,par))
   // fgets(str_buff, n,filepointer) :
   // gets n characters from file in filepointer and stores them
   // in str_buff.
   // returns 0 if EoF is reached.
   
   {
+
+    // check whether tempbuff is empty line
+    int isempty = 0;
+    for (int i = 0; i<MAX_LINE_SIZE; i++){
+      if (tempbuff[i] != ' '){
+        if (tempbuff[i] == '\n'){
+          isempty = 1;
+        }
+        break;
+      }
+    }
+
+    if (isempty) continue;
+
+
     sscanf(tempbuff, "%20s = %56[^\n]\n", varname, varvalue);
     // reads formatted input from a string, writes it in
     // the variables given after the format string.
     // The format used is <string> separator <=> <string> ends with <;>
   
-
     if (strcmp(varname,"verbose") == 0) {
       p->verbose = atoi(varvalue);
-    // atoi/atof: convert string to integer/float
-    // from stdlib.h
     } 
+    else if (strcmp(varname, "debug") == 0){
+      p->debug = atoi(varvalue);
+    }
     else if (strcmp(varname, "levelmax") == 0){
       p->levelmax = atoi(varvalue);
     }
@@ -89,12 +112,16 @@ void read_paramfile(params* p){
       // ignore comments
       continue;
     }
+    else if (strcmp(varname, "")==0) {
+      // ignore comments
+      continue;
+    }
     else{
       printf("Unrecongized parameter : \"%s\"\n", varname);
     }
   }
 
-    fclose(par);
+  fclose(par);
 
 }
 
@@ -108,7 +135,7 @@ void read_paramfile(params* p){
 /* ====================================================================== */
 /* Read in initial condition file                                         */
 /* ====================================================================== */
-void read_datafile(params* p){
+void read_datafile(params* p, parts* parts){
 
   //open file
   FILE *dat = fopen(p->datafilename, "r");
@@ -119,22 +146,47 @@ void read_datafile(params* p){
     exit(604);
   }
 
-  char xs[12], ys[12], zs[12], vxs[12], vys[12], vzs[12], ms[12];
-  char tempbuff[90];
+  char tempbuff[MAX_LINE_SIZE];
 
   
-  fgets(tempbuff,15,dat);
-  sscanf(tempbuff, "%12lg \n", p->boxlen);
-  fgets(tempbuff,15,dat);
-  sscanf(tempbuff, "%12d \n", p->npart);
+  if (!fgets(tempbuff, MAX_LINE_SIZE, dat)){
+    printf("Error reading IC: couldn't read boxlen\n");
+    exit(606);
+  };
+  sscanf(tempbuff, "%le", &(p->boxlen));
 
-  
+  if (!fgets(tempbuff, MAX_LINE_SIZE, dat)){
+    printf("Error reading IC: couldn't read npart\n");
+    exit(607);
+  };
+  sscanf(tempbuff, "%d", &(p->npart));
 
 
-  for (int i=0; i<p->npart; i++)
-  {
-    fgets(tempbuff,15,dat);
-    sscanf(tempbuff, "%12g %12g %12g %12g %12g %12g %12g\n", xs, ys, zs, vxs, vys, vzs, ms);
+  /* Allocate particle arrays. */
+  if (p->debug) printf("Allocating particle arrays.\n");
+  parts->x = malloc(p->npart*sizeof(double));
+  parts->y = malloc(p->npart*sizeof(double));
+  parts->z = malloc(p->npart*sizeof(double));
+  parts->vx = malloc(p->npart*sizeof(double));
+  parts->vy = malloc(p->npart*sizeof(double));
+  parts->vz = malloc(p->npart*sizeof(double));
+  parts->m = malloc(p->npart*sizeof(double));
+  printf("check\n");
+
+
+  for (int i=0; i<p->npart; i++){
+    printf("reading particle %d\n", i);
+    if (!fgets(tempbuff, MAX_LINE_SIZE, dat)){
+      printf("Error reading IC: stuck at particle index %d out of %d\n", i, p->npart);
+      exit(605);
+    };
+    /* asterisks: don't store commas that I'm skipping */
+    sscanf(tempbuff, "%le, %le, %le, %le, %le, %le, %le*", \
+      &parts->x[i], &parts->y[i], &parts->z[i],    \
+      &parts->vx[i], &parts->vy[i], &parts->vz[i], \
+      &parts->m[i]);
+    /* printf(" read in: %s", tempbuff); */
+    /* printf("in array: %le, %le, %le, %le, %le, %le, %le\n", parts->x[i], parts->y[i], parts->z[i], parts->vx[i], parts->vy[i], parts->vz[i], parts->m[i]); */
   }
   fclose(dat);
 

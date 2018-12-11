@@ -3,6 +3,8 @@
 levelmax = 3
 nstepmax = 10
 verbose = 1
+debug = 1
+as = 9
 
 unit_l = 3.0
 unit_m = 3.0

@@ -19,6 +19,7 @@ from matplotlib import pyplot as plt
 if len(argv) < 2:
     print("Need levelmax as cmd line arg.")
     print(errmsg)
+    quit()
 
 else:
     try:
@@ -40,8 +41,8 @@ dxh = dx/2.0
 
 
 f = open('IC_SPH_uniform_3D.dat', "w+")
-f.write("%12g \n" % boxlen)    # write boxlen
-f.write("%12d \n" % twotol**3) # write nparts
+f.write("%12.6E \n" % boxlen)    # write boxlen
+f.write("%12i \n" % twotol**3) # write nparts
 
 
 #  x = np.zeros(twotol**3)
@@ -56,7 +57,7 @@ for i in range(twotol):
         for k in range(twotol):
             zz = dxh + k * dx
 
-            f.write("%12g %12g %12g %12g %12g %12g %12g\n" % (xx,yy,zz,0,0,0,1))
+            f.write("%12.6E, %12.6E, %12.6E, %12.6E, %12.6E, %12.6E, %12.6E\n" % (xx,yy,zz,0.0,0.0,0.0,1))
 
             #  x[ind] = xx
             #  y[ind] = yy
@@ -69,3 +70,5 @@ for i in range(twotol):
 #  plt.xlim([0,boxlen])
 #  plt.ylim([0,boxlen])
 #  plt.show()
+
+print("Done.")
