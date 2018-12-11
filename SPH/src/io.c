@@ -175,7 +175,6 @@ void read_datafile(params* p, parts* parts){
 
 
   for (int i=0; i<p->npart; i++){
-    printf("reading particle %d\n", i);
     if (!fgets(tempbuff, MAX_LINE_SIZE, dat)){
       printf("Error reading IC: stuck at particle index %d out of %d\n", i, p->npart);
       exit(605);

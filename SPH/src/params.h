@@ -12,6 +12,7 @@ typedef struct {
   double boxlen;
   int npart;
   int levelmax;
+  int ncelltot;
 
   double unit_m;
   double unit_l;

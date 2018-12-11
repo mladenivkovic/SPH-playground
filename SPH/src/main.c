@@ -14,6 +14,7 @@
 #include "io.h"
 #include "params.h"
 #include "part.h"
+#include "tree.h"
 
 #ifndef NDIM
 #define NDIM 3
@@ -33,6 +34,9 @@ int main(int argc, char* argv[]){
   read_datafile(&p, &part);
   check_params(&p);
   print_params(&p);
+
+  cell *tree;
+  init_tree(tree, &p);
 
   return(0);
 
