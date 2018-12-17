@@ -16,7 +16,6 @@ void check_params(params* p){
 
   int error = 0;
 
-
   if (p->verbose){
     printf("Am verbose\n");
   }
@@ -24,8 +23,9 @@ void check_params(params* p){
     printf("Am quiet\n");
   }
 
-  if (p->levelmax == 0) {
-    printf("Got levelmax = 0. Weird, but ok I guess...\n");
+  if (p->nx == 0) {
+    printf("Got nx = 0. Shouldn't run with no 0 cells. Setting nx=100\n");
+    p->nx = 100;
   }
 
   if (p->nstepmax==0 && p->tmax==0) {
@@ -52,6 +52,8 @@ void check_params(params* p){
     exit(602);
   }
 
+  p->dx = p->boxlen/p->nx;
+
 }
 
 
@@ -74,7 +76,8 @@ void init_params(params * p){
   p->dt_max=1e10;
   p->boxlen=1.0;
   p->npart=0;
-  p->levelmax = 0;
+  p->nx = 0;
+  p->dx = 0;
   p->verbose = 0;
   p->debug = 0;
 
@@ -94,7 +97,7 @@ void init_params(params * p){
  *==============================================*/
 
 void print_params(params * p){
-  printf("==================================================\n");
+  printf("\n==================================================\n");
   printf("Starting simulation. Parameters are:\n");
 
   printf("Verbose?              ");
@@ -110,11 +113,12 @@ void print_params(params * p){
     printf("False\n");
   }
 
-  printf("levelmax:             %d\n", p->levelmax);
   printf("nstepmax:             %d\n", p->nstepmax);
   printf("tmax:                 %g\n", p->tmax);
   printf("boxlen:               %g\n", p->boxlen);
   printf("npart:                %d\n", p->npart);
+  printf("nx:                   %d\n", p->nx);
+  printf("dx:                   %g\n", p->dx);
 
 
   printf("\n");
@@ -122,6 +126,6 @@ void print_params(params * p){
   printf("unit_m:               %g\n", p->unit_m);
   printf("unit_l:               %g\n", p->unit_l);
   printf("unit_t:               %g\n", p->unit_t);
-  printf("==================================================\n");
+  printf("==================================================\n\n");
 
 }

@@ -86,8 +86,8 @@ void read_paramfile(params* p){
     else if (strcmp(varname, "debug") == 0){
       p->debug = atoi(varvalue);
     }
-    else if (strcmp(varname, "levelmax") == 0){
-      p->levelmax = atoi(varvalue);
+    else if (strcmp(varname, "nx") == 0){
+      p->nx = atoi(varvalue);
     }
     else if (strcmp(varname, "nstepmax") == 0){
       p->nstepmax = atoi(varvalue);
@@ -149,6 +149,9 @@ void read_datafile(params* p, parts* parts){
   char tempbuff[MAX_LINE_SIZE];
 
   
+  if (p->debug) printf("Reading data file.\n");
+
+  
   if (!fgets(tempbuff, MAX_LINE_SIZE, dat)){
     printf("Error reading IC: couldn't read boxlen\n");
     exit(606);
@@ -171,8 +174,6 @@ void read_datafile(params* p, parts* parts){
   parts->vy = malloc(p->npart*sizeof(double));
   parts->vz = malloc(p->npart*sizeof(double));
   parts->m = malloc(p->npart*sizeof(double));
-  printf("check\n");
-
 
   for (int i=0; i<p->npart; i++){
     if (!fgets(tempbuff, MAX_LINE_SIZE, dat)){
@@ -184,8 +185,6 @@ void read_datafile(params* p, parts* parts){
       &parts->x[i], &parts->y[i], &parts->z[i],    \
       &parts->vx[i], &parts->vy[i], &parts->vz[i], \
       &parts->m[i]);
-    /* printf(" read in: %s", tempbuff); */
-    /* printf("in array: %le, %le, %le, %le, %le, %le, %le\n", parts->x[i], parts->y[i], parts->z[i], parts->vx[i], parts->vy[i], parts->vz[i], parts->m[i]); */
   }
   fclose(dat);
 

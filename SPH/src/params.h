@@ -3,25 +3,25 @@
 /* GLOBAL PARAMETERS */
 typedef struct {
 
-  int nstepmax;
-  int step;
-  double tmax;
-  double t;
-  double dt_max;
+  int     nstepmax;            /* max number of steps code should do */
+  int     step;                /* current step number                */
+  double  tmax;                /* max time for code to run           */
+  double  t;                   /* current time                       */
+  double  dt_max;              /* max next timestep interval         */
   
-  double boxlen;
-  int npart;
-  int levelmax;
-  int ncelltot;
+  double  boxlen;              /* total boxlen                       */
+  int     npart;               /* number of particles                */
+  int     nx;                  /* number of cells                    */
+  double  dx;                  /* cell edge size                     */
 
-  double unit_m;
-  double unit_l;
-  double unit_t;
+  double  unit_m;              /* mass unit                          */
+  double  unit_l;              /* length unit                        */
+  double  unit_t;              /* time unit                          */
   
-  int verbose;
-  int debug;
-  char paramfilename[200];
-  char datafilename[200];
+  int     verbose;             /* am I talking?                      */
+  int     debug;               /* am I talking a lot for debugging?  */
+  char    paramfilename[200];  /* parameter file name                */
+  char    datafilename[200];   /* data file name                     */
 } params;
 
 
