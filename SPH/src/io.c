@@ -89,6 +89,9 @@ void read_paramfile(params* p){
     else if (strcmp(varname, "nx") == 0){
       p->nx = atoi(varvalue);
     }
+    else if (strcmp(varname, "nneigh") == 0){
+      p->nneigh = atoi(varvalue);
+    }
     else if (strcmp(varname, "nstepmax") == 0){
       p->nstepmax = atoi(varvalue);
     }
@@ -135,7 +138,7 @@ void read_paramfile(params* p){
 /* ====================================================================== */
 /* Read in initial condition file                                         */
 /* ====================================================================== */
-void read_datafile(params* p, parts* parts){
+void read_datafile(params* p, part* parts){
 
   //open file
   FILE *dat = fopen(p->datafilename, "r");
@@ -165,16 +168,31 @@ void read_datafile(params* p, parts* parts){
   sscanf(tempbuff, "%d", &(p->npart));
 
 
+  /* check that you have enough particles to work with */
+  if (p->npart < p->nneigh){
+    printf("Error: Can't run with %d particles while demanding %d neighbours. Quitting.\n", p->npart, p->nneigh);
+    exit(1);
+  }
+
+
+
+
   /* Allocate particle arrays. */
   if (p->debug) printf("Allocating particle arrays.\n");
-  parts->x = malloc(p->npart*sizeof(double));
-  parts->y = malloc(p->npart*sizeof(double));
-  parts->z = malloc(p->npart*sizeof(double));
-  parts->vx = malloc(p->npart*sizeof(double));
-  parts->vy = malloc(p->npart*sizeof(double));
-  parts->vz = malloc(p->npart*sizeof(double));
-  parts->m = malloc(p->npart*sizeof(double));
+  parts->x        = malloc(p->npart*sizeof(double));
+  parts->y        = malloc(p->npart*sizeof(double));
+  parts->z        = malloc(p->npart*sizeof(double));
+  parts->vx       = malloc(p->npart*sizeof(double));
+  parts->vy       = malloc(p->npart*sizeof(double));
+  parts->vz       = malloc(p->npart*sizeof(double));
+  parts->m        = malloc(p->npart*sizeof(double));
+  parts->h        = malloc(p->npart*sizeof(double));
+  parts->P        = malloc(p->npart*sizeof(double));
+  parts->rho      = malloc(p->npart*sizeof(double));
+  parts->cellind  = malloc(p->npart*sizeof(int));
 
+
+  /* read in particles, initialize unread properties */
   for (int i=0; i<p->npart; i++){
     if (!fgets(tempbuff, MAX_LINE_SIZE, dat)){
       printf("Error reading IC: stuck at particle index %d out of %d\n", i, p->npart);
@@ -185,6 +203,8 @@ void read_datafile(params* p, parts* parts){
       &parts->x[i], &parts->y[i], &parts->z[i],    \
       &parts->vx[i], &parts->vy[i], &parts->vz[i], \
       &parts->m[i]);
+      parts->h[i] = 0;
+      parts->cellind[i] = -1;
   }
   fclose(dat);
 

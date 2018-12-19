@@ -1,6 +1,6 @@
 // parameter file for SPH program
 
-nx = 4
+nx = 6
 nstepmax = 10
 verbose = 1
 debug = 1

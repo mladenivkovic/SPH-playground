@@ -13,6 +13,7 @@ typedef struct {
   int     npart;               /* number of particles                */
   int     nx;                  /* number of cells                    */
   double  dx;                  /* cell edge size                     */
+  int     nneigh;              /* number of neighbours               */
 
   double  unit_m;              /* mass unit                          */
   double  unit_l;              /* length unit                        */

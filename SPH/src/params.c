@@ -11,7 +11,6 @@
  * the simulation can be run with the given
  * parameters, or stops the run otherwise.
  *============================================*/
-
 void check_params(params* p){
 
   int error = 0;
@@ -30,8 +29,16 @@ void check_params(params* p){
 
   if (p->nstepmax==0 && p->tmax==0) {
     printf("Got no info on when to end. You need to specify either nstepmax or tmax in your parameter file.\n");
-    error = 1;
+    printf("Running simulation for exactly 1 step.\n");
+    p->nstepmax=1;
   }
+
+  if (p->nneigh==0){
+    printf("Setting default number of neighbours nneigh=33\n");
+    p->nneigh=33;
+  }
+
+
 
 
   if (p->unit_m==0){
@@ -70,24 +77,25 @@ void check_params(params* p){
 void init_params(params * p){
 
   p->nstepmax = 0;
-  p->step=0;
-  p->tmax = 0.0;
-  p->t=0.0;
-  p->dt_max=1e10;
-  p->boxlen=1.0;
-  p->npart=0;
-  p->nx = 0;
-  p->dx = 0;
-  p->verbose = 0;
-  p->debug = 0;
+  p->step     = 0;
+  p->tmax     = 0.0;
+  p->t        = 0.0;
+  p->dt_max   = 1e10;
+  p->boxlen   = 1.0;
+  p->npart    = 0;
+  p->nneigh   = 0;
+  p->nx       = 0;
+  p->dx       = 0;
+  p->verbose  = 0;
+  p->debug    = 0;
+
+  p->unit_m   = 1.0;
+  p->unit_l   = 1.0;
+  p->unit_t   = 1.0;
 
   strcpy(p->paramfilename, "");
   strcpy(p->datafilename,  "");
-
-  p->unit_m = 1.0;
-  p->unit_l = 1.0;
-  p->unit_t = 1.0;
-
+ 
 }
 
 
@@ -117,6 +125,7 @@ void print_params(params * p){
   printf("tmax:                 %g\n", p->tmax);
   printf("boxlen:               %g\n", p->boxlen);
   printf("npart:                %d\n", p->npart);
+  printf("neighbours:           %d\n", p->nneigh);
   printf("nx:                   %d\n", p->nx);
   printf("dx:                   %g\n", p->dx);
 
