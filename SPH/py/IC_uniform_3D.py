@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 errmsg="""
 Creates IC files for SPH project:
